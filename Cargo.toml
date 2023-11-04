@@ -7,3 +7,6 @@ edition = "2021"
 rusqlite = { version = "0.26.0", features = ["bundled"] }
 async-std = { version = "1.12.0", features = ["attributes"] }
 rpassword = "4.0.0"
+rsa = "0.9.3"
+rand = "0.8"
+base64 = "0.13"

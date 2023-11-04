@@ -1,12 +1,19 @@
 use rusqlite::{Connection, params};
 use std::io;
 use async_std::task;
+use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
+use base64::encode;
 
 fn main() {
     task::block_on(run());
 }
 
 async fn run() {
+    let mut rng = rand::thread_rng();
+    let bits = 2048;
+    let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
+    let pub_key = RsaPublicKey::from(&priv_key);
+
     let connection = Connection::open("password_manager.db").expect("Failed to open database");
 
     connection
@@ -29,8 +36,8 @@ async fn run() {
         let choice: u32 = get_choice("Enter your choice: ");
 
         match choice {
-            1 => add_password(&connection).await,
-            2 => retrieve_password(&connection).await,
+            1 => add_password(&connection, &pub_key).await,
+            2 => retrieve_password(&connection, &priv_key).await,
             3 => delete_password(&connection).await,
             4 => {
                 println!("Exiting password manager. Goodbye!");
@@ -42,15 +49,16 @@ async fn run() {
 }
 
 
-async fn add_password(connection: &Connection) {
+async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     let website = get_input("Enter the website or app name: ");
     let username = get_input("Enter the username: ");
     let password = get_password("Enter the password: ");
 
     let composite_key = format!("{}|{}", website, username);
-    let encrypted_password = encrypt_password(&password);
 
-    println!("Encrypted Password: {}", encrypted_password); // Print the encrypted password
+    // Encrypt the password using RSA
+    let encrypted_password = encrypt_password(&password, &pub_key);
+    println!("Encrypted Password is: {}\n", encrypted_password);
 
     connection
         .execute(
@@ -63,7 +71,7 @@ async fn add_password(connection: &Connection) {
 }
 
 
-async fn retrieve_password(connection: &Connection) {
+async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
     let website = get_input("Enter the website or app name: ");
     let username = get_input("Enter the username: ");
 
@@ -75,8 +83,9 @@ async fn retrieve_password(connection: &Connection) {
         |row| Ok((row.get::<usize, String>(0)?, row.get::<usize, String>(1)?)),
     ) {
         Ok((found_username, encrypted_password)) => {
-            let decrypted_password = decrypt_password(&encrypted_password);
-            println!("Credentials for {} are: Username: {}, Password: {}", composite_key, found_username, decrypted_password);
+            // Decrypt the password using RSA
+            let decrypted_password = decrypt_password(&encrypted_password, priv_key);
+            println!("Credentials for {} are: Username: {}, Password: {}\n", composite_key, found_username, decrypted_password);
         }
         Err(_) => println!("Credentials not found for {}.", composite_key),
     }
@@ -90,7 +99,7 @@ async fn delete_password(connection: &Connection) {
     match connection
         .execute("DELETE FROM passwords WHERE website_username = ?1", params![composite_key])
     {
-        Ok(rows_affected) if rows_affected > 0 => println!("Password deleted successfully!"),
+        Ok(rows_affected) if rows_affected > 0 => println!("Password deleted successfully!\n"),
         _ => println!("Password not found for {}.", composite_key),
     }
 }
@@ -137,32 +146,48 @@ fn get_password(prompt: &str) -> String {
     }
 }
 
-fn encrypt_password(credentials: &str) -> String {
-    let shift: u8 = 3;
-    credentials
-        .chars()
-        .map(|c| {
-            if c.is_ascii_graphic() {
-                let base = 32;
-                ((c as u8 - base + shift) % 94 + base) as char
-            } else {
-                c
-            }
-        })
-        .collect()
+// fn encrypt_password(credentials: &str) -> String {
+//     let shift: u8 = 3;
+//     credentials
+//         .chars()
+//         .map(|c| {
+//             if c.is_ascii_graphic() {
+//                 let base = 32;
+//                 ((c as u8 - base + shift) % 94 + base) as char
+//             } else {
+//                 c
+//             }
+//         })
+//         .collect()
+// }
+
+// fn decrypt_password(encrypted_credentials: &str) -> String {
+//     let shift: u8 = 3;
+//     encrypted_credentials
+//         .chars()
+//         .map(|c| {
+//             if c.is_ascii_graphic() {
+//                 let base = 32; 
+//                 ((c as u8 - base + 94 - shift) % 94 + base) as char
+//             } else {
+//                 c
+//             }
+//         })
+//         .collect()
+// }
+
+fn encrypt_password(credentials: &str, pub_key: &RsaPublicKey) -> String {
+    let mut rng = rand::thread_rng();
+    let data = credentials.as_bytes();
+    let enc_data = pub_key.encrypt(&mut rng, Pkcs1v15Encrypt, &data).expect("failed to encrypt");
+    let enc_data_base64 = encode(&enc_data);
+    enc_data_base64
 }
 
-fn decrypt_password(encrypted_credentials: &str) -> String {
-    let shift: u8 = 3;
-    encrypted_credentials
-        .chars()
-        .map(|c| {
-            if c.is_ascii_graphic() {
-                let base = 32; 
-                ((c as u8 - base + 94 - shift) % 94 + base) as char
-            } else {
-                c
-            }
-        })
-        .collect()
+fn decrypt_password(encrypted_credentials: &str, priv_key: &RsaPrivateKey) -> String {
+    let enc_data = base64::decode(encrypted_credentials).expect("failed to decode base64");
+    let dec_data = priv_key.decrypt(Pkcs1v15Encrypt, &enc_data).expect("failed to decrypt");
+    let dec_data_str = String::from_utf8_lossy(&dec_data).to_string();
+    dec_data_str
 }
+
