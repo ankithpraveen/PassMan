@@ -43,7 +43,7 @@ async fn run() {
                 println!("Exiting password manager. Goodbye!");
                 break;
             }
-            _ => println!("Invalid choice. Please try again."),
+            _ => println!("Invalid choice. Please try again.\n"),
         }
     }
 }
@@ -67,7 +67,7 @@ async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
         )
         .expect("Failed to insert data");
 
-    println!("Password added successfully!");
+    println!("Password added successfully!\n");
 }
 
 
@@ -87,7 +87,7 @@ async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
             let decrypted_password = decrypt_password(&encrypted_password, priv_key);
             println!("Credentials for {} are: Username: {}, Password: {}\n", composite_key, found_username, decrypted_password);
         }
-        Err(_) => println!("Credentials not found for {}.", composite_key),
+        Err(_) => println!("Credentials not found for {}.\n", composite_key),
     }
 }
 
@@ -100,7 +100,7 @@ async fn delete_password(connection: &Connection) {
         .execute("DELETE FROM passwords WHERE website_username = ?1", params![composite_key])
     {
         Ok(rows_affected) if rows_affected > 0 => println!("Password deleted successfully!\n"),
-        _ => println!("Password not found for {}.", composite_key),
+        _ => println!("Password not found for {}.\n", composite_key),
     }
 }
 
@@ -112,7 +112,7 @@ fn get_choice(prompt: &str) -> u32 {
 
         match input.trim().parse() {
             Ok(num) => return num,
-            Err(_) => println!("Invalid input. Please enter a valid number."),
+            Err(_) => println!("Invalid input. Please enter a valid number.\n"),
         }
     }
 }
@@ -128,7 +128,7 @@ fn get_input(prompt: &str) -> String {
         if !trimmed_input.is_empty() {
             return trimmed_input;
         } else {
-            println!("Invalid input. Please enter a non-empty string.");
+            println!("Invalid input. Please enter a non-empty string.\n");
         }
     }
 }
@@ -141,7 +141,7 @@ fn get_password(prompt: &str) -> String {
         if !password.trim().is_empty() {
             return password.trim().to_string();
         } else {
-            println!("Invalid input. Please enter a non-empty password.");
+            println!("Invalid input. Please enter a non-empty password.\n");
         }
     }
 }
@@ -190,4 +190,3 @@ fn decrypt_password(encrypted_credentials: &str, priv_key: &RsaPrivateKey) -> St
     let dec_data_str = String::from_utf8_lossy(&dec_data).to_string();
     dec_data_str
 }
-
