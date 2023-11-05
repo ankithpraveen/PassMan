@@ -547,6 +547,7 @@ dependencies = [
  "async-std",
  "base64",
  "rand",
+ "rand_chacha",
  "rpassword",
  "rsa",
  "rusqlite",

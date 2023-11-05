@@ -3,17 +3,19 @@ use std::io;
 use async_std::task;
 use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
 use base64::encode;
+use rand_chacha::ChaChaRng;
+use rand::SeedableRng;
 
 fn main() {
     task::block_on(run());
 }
 
 async fn run() {
-    let mut rng = rand::thread_rng();
+    let seed = [42; 32];
+    let mut rng = ChaChaRng::from_seed(seed);
     let bits = 2048;
     let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
     let pub_key = RsaPublicKey::from(&priv_key);
-
     let connection = Connection::open("password_manager.db").expect("Failed to open database");
 
     connection
@@ -177,7 +179,8 @@ fn get_password(prompt: &str) -> String {
 // }
 
 fn encrypt_password(credentials: &str, pub_key: &RsaPublicKey) -> String {
-    let mut rng = rand::thread_rng();
+    let seed = [42; 32]; // Use any byte array as the seed
+    let mut rng = ChaChaRng::from_seed(seed);
     let data = credentials.as_bytes();
     let enc_data = pub_key.encrypt(&mut rng, Pkcs1v15Encrypt, &data).expect("failed to encrypt");
     let enc_data_base64 = encode(&enc_data);
