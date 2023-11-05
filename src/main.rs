@@ -6,18 +6,73 @@ use base64::encode;
 use rand_chacha::ChaChaRng;
 use rand::SeedableRng;
 use rand::Rng;
+use std::time::Instant;
 
 fn main() {
     task::block_on(run());
 }
 
 async fn run() {
+    let connection = Connection::open("password_manager.db").expect("Failed to open database");
+
+    connection
+        .execute(
+            "CREATE TABLE IF NOT EXISTS master_password (
+                password TEXT
+            )",
+            params![],
+        )
+        .expect("Failed to create master_password table");
+
+    let master_password: String = match connection.query_row(
+        "SELECT password FROM master_password",
+        params![],
+        |row| Ok(row.get(0)?),
+    ) {
+        Ok(password) => password,
+        Err(_) => {
+            println!("Welcome! This is the first time you are using PassMan. You need to set a new master password.");
+            let new_master_password = get_password("Enter a new master password: ");
+            connection
+                .execute(
+                    "INSERT INTO master_password (password) VALUES (?1)",
+                    params![new_master_password],
+                )
+                .expect("Failed to insert master password");
+            new_master_password
+        }
+    };
+
+    let mut master_password_attempts = 2;
+
+    loop {
+        let entered_password = get_password("Enter the master password: ");
+        
+        if entered_password == master_password {
+            break; // Correct master password, exit the loop
+        } else {
+            println!("Incorrect master password. You have {} attempts remaining.", master_password_attempts);
+            master_password_attempts -= 1;
+
+            if master_password_attempts == 0 {
+                println!("Exceeded maximum number of attempts. Exiting.");
+                return;
+            }
+        }
+    }
+
+    println!("Master password correct. Access granted.\nGenerating keys for encryption and decryption...");
+
     let seed = [42; 32];
     let mut rng = ChaChaRng::from_seed(seed);
     let bits = 2048;
+    
+    let keygen_start = Instant::now();
     let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
     let pub_key = RsaPublicKey::from(&priv_key);
-    let connection = Connection::open("password_manager.db").expect("Failed to open database");
+    let keygen_duration = keygen_start.elapsed();
+
+    println!("Keys generated in {:?}.\n", keygen_duration);
 
     connection
         .execute(
@@ -33,16 +88,20 @@ async fn run() {
     loop {
         println!("1. Add Password");
         println!("2. Retrieve Password");
-        println!("3. Delete Password");
-        println!("4. Exit");
+        println!("3. View All Passwords");
+        println!("4. Delete Password");
+        println!("5. Change Master Password");
+        println!("6. Exit");
 
         let choice: u32 = get_choice("Enter your choice: ");
 
         match choice {
             1 => add_password(&connection, &pub_key).await,
             2 => retrieve_password(&connection, &priv_key).await,
-            3 => delete_password(&connection).await,
-            4 => {
+            3 => view_all_passwords(&connection).await,
+            4 => delete_password(&connection).await,
+            5 => change_master_password(&connection).await,
+            6 => {
                 println!("Exiting password manager. Goodbye!");
                 break;
             }
@@ -51,6 +110,36 @@ async fn run() {
     }
 }
 
+async fn change_master_password(connection: &Connection) {
+    let current_password = get_password("Enter the current master password: ");
+
+    let stored_password: String = match connection.query_row(
+        "SELECT password FROM master_password",
+        params![],
+        |row| Ok(row.get(0)?),
+    ) {
+        Ok(password) => password,
+        Err(_) => {
+            println!("Master password not found in the database. You can't change it now.");
+            return;
+        }
+    };
+
+    if current_password != stored_password {
+        println!("Incorrect current master password. Change password operation aborted.\n");
+        return;
+    }
+
+    let new_password = get_password("Enter a new master password: ");
+    connection
+        .execute(
+            "UPDATE master_password SET password = ?1",
+            params![new_password],
+        )
+        .expect("Failed to update master password");
+    
+    println!("Master password changed successfully.\n");
+}
 
 async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     let website = get_input("Enter the website or app name: ");
@@ -108,6 +197,36 @@ async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
         Err(_) => println!("Credentials not found for {}.\n", composite_key),
     }
 }
+
+async fn view_all_passwords(connection: &Connection) {
+    println!("Listing all stored credentials (website and username):");
+    let mut statement = connection
+        .prepare("SELECT website_username FROM passwords")
+        .expect("Failed to prepare statement");
+
+    let mut rows = statement
+        .query(params![])
+        .expect("Failed to query for stored passwords");
+
+    let mut found = false;
+
+    while let Some(row) = rows.next().expect("Failed to fetch next row") {
+        let website_username: String = row.get(0).expect("Failed to get website_username");
+
+        let parts: Vec<&str> = website_username.split('|').collect();
+        if parts.len() == 2 {
+            let website = parts[0];
+            let username = parts[1];
+            println!("Website: {}, Username: {}", website, username);
+            found = true;
+        }
+    }
+
+    if !found {
+        println!("No passwords stored.\n");
+    }
+}
+
 
 async fn delete_password(connection: &Connection) {
     let website = get_input("Enter the website or app name: ");
