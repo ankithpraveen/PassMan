@@ -5,6 +5,7 @@ use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
 use base64::encode;
 use rand_chacha::ChaChaRng;
 use rand::SeedableRng;
+use rand::Rng;
 
 fn main() {
     task::block_on(run());
@@ -56,10 +57,21 @@ async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     let username = get_input("Enter the username: ");
     let password = get_password("Enter the password: ");
 
+    // Generate a random 5-character nonce with characters from the specified set
+    let nonce: String = (0..5)
+        .map(|_| {
+            let ascii_char = rand::thread_rng().gen_range(32..127) as u8;
+            char::from(ascii_char)
+        })
+        .collect();
+
+    // Combine the nonce with the credentials
+    let credentials = format!("{}{}", nonce, password);
+
     let composite_key = format!("{}|{}", website, username);
 
     // Encrypt the password using RSA
-    let encrypted_password = encrypt_password(&password, &pub_key);
+    let encrypted_password = encrypt_password(&credentials, &pub_key);
     println!("Encrypted Password is: {}\n", encrypted_password);
 
     connection
@@ -86,7 +98,11 @@ async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
     ) {
         Ok((found_username, encrypted_password)) => {
             // Decrypt the password using RSA
-            let decrypted_password = decrypt_password(&encrypted_password, priv_key);
+            let decrypted_password_with_nonce = decrypt_password(&encrypted_password, priv_key);
+
+            // Extract the nonce and credentials
+            let (_nonce, decrypted_password) = decrypted_password_with_nonce.split_at(5);
+
             println!("Credentials for {} are: Username: {}, Password: {}\n", composite_key, found_username, decrypted_password);
         }
         Err(_) => println!("Credentials not found for {}.\n", composite_key),
