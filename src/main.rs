@@ -144,8 +144,27 @@ async fn change_master_password(connection: &Connection) {
 async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     let website = get_input("Enter the website or app name: ");
     let username = get_input("Enter the username: ");
-    let password = get_password("Enter the password: ");
+    
+    println!("Choose how to set the password:");
+    println!("1. Enter Password Manually");
+    println!("2. Generate Random Password");
 
+    let choice: u32 = get_choice("Enter your choice: ");
+
+    match choice {
+        1 => {
+            let password = get_password("Enter the password: ");
+            add_password_with_credentials(connection, website, username, password, pub_key).await;
+        }
+        2 => {
+            let random_password = generate_random_password();
+            add_password_with_credentials(connection, website, username, random_password, pub_key).await;
+        }
+        _ => println!("Invalid choice. Please try again.\n"),
+    }
+}
+
+async fn add_password_with_credentials(connection: &Connection, website: String, username: String, password: String, pub_key: &RsaPublicKey) {
     // Generate a random 5-character nonce with characters from the specified set
     let nonce: String = (0..5)
         .map(|_| {
@@ -160,7 +179,7 @@ async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     let composite_key = format!("{}|{}", website, username);
 
     // Encrypt the password using RSA
-    let encrypted_password = encrypt_password(&credentials, &pub_key);
+    let encrypted_password = encrypt_password(&credentials, pub_key);
     println!("Encrypted Password is: {}\n", encrypted_password);
 
     connection
@@ -173,6 +192,20 @@ async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     println!("Password added successfully!\n");
 }
 
+fn generate_random_password() -> String {
+    // Define a set of characters from which to generate the random password
+    let character_set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+    let password: String = (0..16)  // You can adjust the length of the password as needed
+        .map(|_| {
+            let random_index = rand::thread_rng().gen_range(0..character_set.len());
+            character_set.chars().nth(random_index).unwrap()
+        })
+        .collect();
+    
+    println!("Your random password is: {}\n", password);
+    password
+}
 
 async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
     let website = get_input("Enter the website or app name: ");
@@ -223,8 +256,9 @@ async fn view_all_passwords(connection: &Connection) {
     }
 
     if !found {
-        println!("No passwords stored.\n");
+        println!("No passwords stored.");
     }
+    println!();
 }
 
 
