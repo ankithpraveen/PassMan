@@ -179,7 +179,7 @@ async fn add_password_with_credentials(connection: &Connection, website: String,
 
 fn generate_random_password() -> String {
     // Define a set of characters from which to generate the random password
-    let character_set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+    let character_set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     let password: String = (0..16)  // You can adjust the length of the password as needed
         .map(|_| {

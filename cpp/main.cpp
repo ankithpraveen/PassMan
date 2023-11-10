@@ -254,7 +254,7 @@ void addPasswordWithCredentials(sqlite3* connection, const string& website, cons
 }
 
 string generateRandomPassword() {
-    const string characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+    const string characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     string password;
 
     for (int i = 0; i < 16; i++) {
