@@ -226,9 +226,10 @@ void addPassword(sqlite3* connection) {
 
 void addPasswordWithCredentials(sqlite3* connection, const string& website, const string& username, const string& password) {
     // Generate a random 5-character nonce with characters from the specified set
+    const string characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     string nonce;
     for (int i = 0; i < 5; i++) {
-        char asciiChar = rand() % 94 + 32;
+        char asciiChar = characterSet[rand() % 62];
         nonce += asciiChar;
     }
 
@@ -289,10 +290,12 @@ void retrievePassword(sqlite3* connection) {
         &errMsg
     );
 
-    if (result == SQLITE_OK) {
-        // Decrypt the password using RSA
-        string decryptedPasswordWithNonce = decryptPassword(resultPair.second);
+  if (result == SQLITE_OK) {
+    // Decrypt the password using RSA
+    string decryptedPasswordWithNonce = decryptPassword(resultPair.second);
 
+    // Check if the decrypted password is empty before using substr
+    if (!decryptedPasswordWithNonce.empty() && decryptedPasswordWithNonce.size() >= 5) {
         // Extract the nonce and credentials
         string nonce = decryptedPasswordWithNonce.substr(0, 5);
         string decryptedPassword = decryptedPasswordWithNonce.substr(5);
@@ -301,6 +304,10 @@ void retrievePassword(sqlite3* connection) {
     } else {
         cout << "Credentials not found for " << compositeKey << "." << endl;
     }
+} else {
+    cout << "Credentials not found for " << compositeKey << "." << endl;
+}
+
 }
 
 void viewAllPasswords(sqlite3* connection) {
@@ -313,7 +320,7 @@ void viewAllPasswords(sqlite3* connection) {
         "SELECT website_username FROM passwords",
         [](void* data, int argc, char** argv, char** colName) -> int {
             cout << "Website: " << argv[0] << endl;
-            *static_cast<bool*>(data) = true;
+            static_cast<bool>(data) = true;
             return 0;
         },
         &found,
@@ -420,9 +427,3 @@ std::string decryptPassword(const std::string& encrypted_credentials) {
 
     return decrypted_credentials;
 }
-
-
-
-
-
-
