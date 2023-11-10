@@ -1,12 +1,8 @@
 use rusqlite::{Connection, params};
 use std::io;
 use async_std::task;
-use rsa::{Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
-use base64::encode;
-use rand_chacha::ChaChaRng;
-use rand::SeedableRng;
-use rand::Rng;
 use std::time::Instant;
+use rand::Rng;
 
 fn main() {
     task::block_on(run());
@@ -61,18 +57,7 @@ async fn run() {
         }
     }
 
-    println!("Master password correct. Access granted.\nGenerating keys for encryption and decryption...");
-
-    let seed = [42; 32];
-    let mut rng = ChaChaRng::from_seed(seed);
-    let bits = 2048;
-    
-    let keygen_start = Instant::now();
-    let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
-    let pub_key = RsaPublicKey::from(&priv_key);
-    let keygen_duration = keygen_start.elapsed();
-
-    println!("Keys generated in {:?}.\n", keygen_duration);
+    println!("Master password correct. Access granted.\n");
 
     connection
         .execute(
@@ -96,8 +81,8 @@ async fn run() {
         let choice: u32 = get_choice("Enter your choice: ");
 
         match choice {
-            1 => add_password(&connection, &pub_key).await,
-            2 => retrieve_password(&connection, &priv_key).await,
+            1 => add_password(&connection).await,
+            2 => retrieve_password(&connection).await,
             3 => view_all_passwords(&connection).await,
             4 => delete_password(&connection).await,
             5 => change_master_password(&connection).await,
@@ -141,7 +126,7 @@ async fn change_master_password(connection: &Connection) {
     println!("Master password changed successfully.\n");
 }
 
-async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
+async fn add_password(connection: &Connection) {
     let website = get_input("Enter the website or app name: ");
     let username = get_input("Enter the username: ");
     
@@ -154,17 +139,17 @@ async fn add_password(connection: &Connection, pub_key: &RsaPublicKey) {
     match choice {
         1 => {
             let password = get_password("Enter the password: ");
-            add_password_with_credentials(connection, website, username, password, pub_key).await;
+            add_password_with_credentials(connection, website, username, password).await;
         }
         2 => {
             let random_password = generate_random_password();
-            add_password_with_credentials(connection, website, username, random_password, pub_key).await;
+            add_password_with_credentials(connection, website, username, random_password).await;
         }
         _ => println!("Invalid choice. Please try again.\n"),
     }
 }
 
-async fn add_password_with_credentials(connection: &Connection, website: String, username: String, password: String, pub_key: &RsaPublicKey) {
+async fn add_password_with_credentials(connection: &Connection, website: String, username: String, password: String) {
     // Generate a random 5-character nonce with characters from the specified set
     let nonce: String = (0..5)
         .map(|_| {
@@ -179,7 +164,7 @@ async fn add_password_with_credentials(connection: &Connection, website: String,
     let composite_key = format!("{}|{}", website, username);
 
     // Encrypt the password using RSA
-    let encrypted_password = encrypt_password(&credentials, pub_key);
+    let encrypted_password = encrypt_password(&credentials);
     println!("Encrypted Password is: {}\n", encrypted_password);
 
     connection
@@ -207,7 +192,7 @@ fn generate_random_password() -> String {
     password
 }
 
-async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
+async fn retrieve_password(connection: &Connection) {
     let website = get_input("Enter the website or app name: ");
     let username = get_input("Enter the username: ");
 
@@ -220,7 +205,7 @@ async fn retrieve_password(connection: &Connection, priv_key: &RsaPrivateKey) {
     ) {
         Ok((found_username, encrypted_password)) => {
             // Decrypt the password using RSA
-            let decrypted_password_with_nonce = decrypt_password(&encrypted_password, priv_key);
+            let decrypted_password_with_nonce = decrypt_password(&encrypted_password);
 
             // Extract the nonce and credentials
             let (_nonce, decrypted_password) = decrypted_password_with_nonce.split_at(5);
@@ -317,48 +302,32 @@ fn get_password(prompt: &str) -> String {
     }
 }
 
-// fn encrypt_password(credentials: &str) -> String {
-//     let shift: u8 = 3;
-//     credentials
-//         .chars()
-//         .map(|c| {
-//             if c.is_ascii_graphic() {
-//                 let base = 32;
-//                 ((c as u8 - base + shift) % 94 + base) as char
-//             } else {
-//                 c
-//             }
-//         })
-//         .collect()
-// }
-
-// fn decrypt_password(encrypted_credentials: &str) -> String {
-//     let shift: u8 = 3;
-//     encrypted_credentials
-//         .chars()
-//         .map(|c| {
-//             if c.is_ascii_graphic() {
-//                 let base = 32; 
-//                 ((c as u8 - base + 94 - shift) % 94 + base) as char
-//             } else {
-//                 c
-//             }
-//         })
-//         .collect()
-// }
-
-fn encrypt_password(credentials: &str, pub_key: &RsaPublicKey) -> String {
-    let seed = [42; 32]; // Use any byte array as the seed
-    let mut rng = ChaChaRng::from_seed(seed);
-    let data = credentials.as_bytes();
-    let enc_data = pub_key.encrypt(&mut rng, Pkcs1v15Encrypt, &data).expect("failed to encrypt");
-    let enc_data_base64 = encode(&enc_data);
-    enc_data_base64
+fn encrypt_password(credentials: &str) -> String {
+    let shift: u8 = 3;
+    credentials
+        .chars()
+        .map(|c| {
+            if c.is_ascii_graphic() {
+                let base = 32;
+                ((c as u8 - base + shift) % 94 + base) as char
+            } else {
+                c
+            }
+        })
+        .collect()
 }
 
-fn decrypt_password(encrypted_credentials: &str, priv_key: &RsaPrivateKey) -> String {
-    let enc_data = base64::decode(encrypted_credentials).expect("failed to decode base64");
-    let dec_data = priv_key.decrypt(Pkcs1v15Encrypt, &enc_data).expect("failed to decrypt");
-    let dec_data_str = String::from_utf8_lossy(&dec_data).to_string();
-    dec_data_str
+fn decrypt_password(encrypted_credentials: &str) -> String {
+    let shift: u8 = 3;
+    encrypted_credentials
+        .chars()
+        .map(|c| {
+            if c.is_ascii_graphic() {
+                let base = 32; 
+                ((c as u8 - base + 94 - shift) % 94 + base) as char
+            } else {
+                c
+            }
+        })
+        .collect()
 }
