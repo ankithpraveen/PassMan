@@ -1,2 +1,2 @@
 # PassMan
-Comparison of memory security in Rust and C++ using Password Manager
+Comparison of Rust and C++ in different scenarios using a Password Manager program.
