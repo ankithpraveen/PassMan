@@ -1,0 +1,11 @@
+[package]
+name = "password_manager"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rusqlite = "0.26.0"
+async-std = { version = "1.12.0", features = ["attributes"] }
+rpassword = "4.0.0"
+criterion = "0.4"
+psutil = "3.0.1"
