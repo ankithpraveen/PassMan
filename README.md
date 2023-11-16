@@ -78,11 +78,11 @@ When creating and immediately terminating clients, the time difference is compar
 
 ### Easier Concurrency Implementation in Rust
 
-Concurrency was notably easier to implement in Rust compared to C++ for various reasons. Rust's ownership system and borrowing rules facilitate safe concurrent programming without data races or shared-memory vulnerabilities. Additionally, Rust's ownership model eliminates the need for manual memory management in concurrent scenarios, simplifying code and reducing the likelihood of bugs associated with parallel execution.
+Concurrency was notably easier to implement in Rust compared to C++ for various reasons. Rust's ownership system and borrowing rules facilitate safe concurrent programming without data races or shared-memory vulnerabilities. Additionally, Rust's ownership model eliminates the need for manual memory management in concurrent scenarios, simplifying code and reducing the likelihood of bugs associated with parallel execution. Additionally, it was easier to implement in Rust than C++, as Rust gave rise to compilation errors which are easier to debug than teh runtime erros of C++.
 
 ## Contributors
 
-- Ankith Praveen
-- Ishaan Kudchadkar
-- Lalita Pulavarti
-- Aditi Kashyap
+- Ankith Praveen (2020B4A70625G)
+- Ishaan Kudchadkar (2020B5A70775G)
+- Lalita Pulavarti (2020B4A71884G)
+- Aditi Kashyap (2020B4A71654G)
