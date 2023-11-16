@@ -44,21 +44,21 @@ Welcome to the Password Manager Project, a comprehensive exploration of password
 
 #### Rust Simple Encryption-Decryption Time
 
-Sampled Average Encryption Time: 8460 ns
+Sampled Average Encryption Time: 8460 ns\
 Sampled Average Decryption Time: 3260 ns
 
 #### C++ Simple Encryption-Decryption Time
 
-Sampled Average Encryption Time: 6600 ns
+Sampled Average Encryption Time: 6600 ns\
 Sampled Average Decryption Time: 1400 ns
 
 #### Rust Client Creation and Termination Time
 
-Average Time: 2205320 ns
+Sampled Average Time: 2205320 ns
 
 #### C++ Client Creation and Termination Time
 
-Average Time: 3465340 ns
+Sampled Average Time: 3465340 ns
 
 ## Conclusion
 
