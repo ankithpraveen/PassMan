@@ -58,11 +58,27 @@ Welcome to the Password Manager Project, a comprehensive exploration of password
 
 [Include C++ Simple Encryption Time Results Here]
 
-## Explanation
+## Conclusion
 
-The benchmarking results indicate that, on average, the Rust implementations perform better in terms of both time and memory usage compared to their C++ counterparts. However, it's noteworthy that in the case of simple encryption-decryption, Rust exhibits longer execution times.
+### Memory Security in Rust vs. C++
 
-This discrepancy in simple encryption-decryption times may be attributed to various factors, including language-specific optimizations, library choices, and the nature of the algorithms implemented. While Rust excels in system-level programming and memory safety, the observed differences emphasize the importance of considering the specific use case and requirements when selecting a programming language for security-related applications.
+Memory security is notably better in Rust compared to C++ for several reasons. Rust's ownership system and borrow checker ensure strict control over memory access, preventing common issues like null pointer dereferencing and data races. This enhanced memory safety is crucial for security-sensitive applications, such as password managers, where vulnerabilities can lead to severe consequences.
+
+### Memory Management and Usage Benchmark
+
+Benchmarking results consistently demonstrate superior memory management and usage in Rust when compared to C++. Rust's ownership model enables efficient memory allocation and deallocation, minimizing unnecessary overhead and reducing the risk of memory-related vulnerabilities. This advantage is particularly crucial in security-focused applications like password managers.
+
+### Time Difference for Encryption and Decryption
+
+The time difference for encryption and decryption of a fixed string is comparable between Rust and C++. This similarity can be attributed to the nature of cryptographic operations, where the performance is influenced by algorithmic efficiency rather than language-specific optimizations. While Rust introduces a slight overhead, the observed differences are marginal in scenarios where cryptographic tasks are the primary concern.
+
+### Time Difference for Client Creation and Immediate Termination
+
+When creating and immediately terminating clients, the time difference is comparable between Rust and C++, with Rust exhibiting a slightly higher execution time. This phenomenon can be attributed to Rust's emphasis on safety and initialization procedures, introducing a small computational overhead. However, in scenarios involving frequent client initiation and termination, the differences are minimal and may not significantly impact overall performance.
+
+### Easier Concurrency Implementation in Rust
+
+Concurrency was notably easier to implement in Rust compared to C++ for various reasons. Rust's ownership system and borrowing rules facilitate safe concurrent programming without data races or shared-memory vulnerabilities. Additionally, Rust's ownership model eliminates the need for manual memory management in concurrent scenarios, simplifying code and reducing the likelihood of bugs associated with parallel execution.
 
 ## Contributors
 
