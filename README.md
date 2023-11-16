@@ -34,29 +34,31 @@ Welcome to the Password Manager Project, a comprehensive exploration of password
 
 [Include Rust Memory Usage Results Here]
 
-#### Time Metrics
-
-[Include Rust Time Metrics Results Here]
-
 ### C++ Password Manager Benchmark
 
 #### Memory Usage
 
 [Include C++ Memory Usage Results Here]
 
-#### Time Metrics
+### Simple Encryption-Decryption Comparison
 
-[Include C++ Time Metrics Results Here]
+#### Rust Simple Encryption-Decryption Time
 
-### Simple Encryption Comparison
+Sampled Average Encryption Time: 8460 ns
+Sampled Average Decryption Time: 3260 ns
 
-#### Rust Simple Encryption Time
+#### C++ Simple Encryption-Decryption Time
 
-[Include Rust Simple Encryption Time Results Here]
+Sampled Average Encryption Time: 6600 ns
+Sampled Average Decryption Time: 1400 ns
 
-#### C++ Simple Encryption Time
+#### Rust Client Creation and Termination Time
 
-[Include C++ Simple Encryption Time Results Here]
+Average Time: 2205320 ns
+
+#### C++ Client Creation and Termination Time
+
+Average Time: 3465340 ns
 
 ## Conclusion
 
