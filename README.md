@@ -74,7 +74,7 @@ The time difference for encryption and decryption of a fixed string is comparabl
 
 ### Time Difference for Client Creation and Immediate Termination
 
-When creating and immediately terminating clients, the time difference is comparable between Rust and C++, with Rust exhibiting a slightly higher execution time. This phenomenon can be attributed to Rust's emphasis on safety and initialization procedures, introducing a small computational overhead. However, in scenarios involving frequent client initiation and termination, the differences are minimal and may not significantly impact overall performance.
+When creating and immediately terminating clients, the time difference is comparable between Rust and C++, with Rust exhibiting a slightly higher execution time. This suggests that the initialization and cleanup procedures, involving less computation and memory-intensive operations, are optimized slightly more effectively in Rust. This phenomenon can be attributed to Rust's emphasis on safety and initialization procedures, introducing a small computational overhead. However, in scenarios involving frequent client initiation and termination, the differences are minimal and may not significantly impact overall performance.
 
 ### Easier Concurrency Implementation in Rust
 
