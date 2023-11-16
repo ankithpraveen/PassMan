@@ -39,6 +39,7 @@ For benchmarking results and performance metrics, refer to the benchmarking fold
 
 ## Contributors
 
-- [Your Name]
-- [Contributor 1]
-- [Contributor 2]
+- Ankith Praveen
+- Ishaan Kudchadkar
+- Lalita Pulavarti
+- Aditi Kashyap
