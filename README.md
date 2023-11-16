@@ -13,7 +13,7 @@ Welcome to the Password Manager Project, a comprehensive exploration of password
 
 ### Benchmarking Tools
 
-- **Rust Password Manager Benchmark**: Benchmarking code in Rust, showcasing memory usage and time metrics for encryption and decryption.
+- **Rust Password Manager Benchmark**: Benchmarking code in Rust, showcasing memory usage for the password manager program.
 - **C++ Password Manager Benchmark**: Similar to its Rust counterpart, this folder contains benchmarking tools implemented in C++.
 
 ### Concurrent Password Managers
