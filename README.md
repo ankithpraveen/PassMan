@@ -32,13 +32,13 @@ Welcome to the Password Manager Project, a comprehensive exploration of password
 
 #### Memory Usage
 
-[Include Rust Memory Usage Results Here]
+Sampled Average Memory Utilizatoin: 3.48 MB
 
 ### C++ Password Manager Benchmark
 
 #### Memory Usage
 
-[Include C++ Memory Usage Results Here]
+Sampled Average Memory Utilizatoin: 1824 MB
 
 ### Simple Encryption-Decryption Comparison
 
