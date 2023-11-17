@@ -1,4 +1,4 @@
-# Password Manager Project Readme
+# PassMan
 
 ## Problem Statement:
 
