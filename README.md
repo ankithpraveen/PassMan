@@ -106,13 +106,19 @@ Sampled Average Time: 2205320 ns
 Sampled Average Time: 3465340 ns
 
 ### Graphs and Outputs:
-![Benchmark Outputs for Cache in C++](results/benchmark_cpp_output_cache.jpg "Cache Results for Benchmarking in C++")
-![Benchmark Outputs for Memory in C++](results/benchmark_cpp_output_memory.jpg "Memory Results for Benchmarking in C++")
-![Benchmark Outputs for Memory in rust](results/benchmark_rust_output_memory.jpg "Memory Results for Benchmarking in Rust")
+![Benchmark Outputs for Cache in C++](results/benchmark_cpp_output_cache.jpg)
+#### Cache Results for Benchmarking in C++<br><br>
+![Benchmark Outputs for Memory in C++](results/benchmark_cpp_output_memory.jpg)
+#### Memory Results for Benchmarking in C++<br><br>
+![Benchmark Outputs for Memory in rust](results/benchmark_rust_output_memory.jpg)
+#### Memory Results for Benchmarking in Rust<br><br>
 
-![Graph for Simple Encryption time Rust vs C++](results/simple_encryption_output.png "Simple Encryption time Rust vs C++")
-![Graph for Simple Decryption time Rust vs C++](results/simple_decryption_output.png "Simple Decryption time Rust vs C++")
-![Graph for Client Creation and Termination time Rust vs C++](results/client_creation_termination_output.png "Client Creation and Termination time Rust vs C++")
+![Graph for Simple Encryption time Rust vs C++](results/simple_encryption_output.png)
+#### Simple Encryption time Rust vs C++<br><br>
+![Graph for Simple Decryption time Rust vs C++](results/simple_decryption_output.png)
+#### Simple Decryption time Rust vs C++<br><br>
+![Graph for Client Creation and Termination time Rust vs C++](results/client_creation_termination_output.png)
+#### Client Creation and Termination time Rust vs C++<br><br>
 
 ### Validation:
 
