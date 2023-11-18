@@ -29,9 +29,6 @@ The project employs local testing on the developer's machine, focusing on manual
 For database integration, SQLite3 is employed to store encrypted passwords securely. The local testing approach allows for iterative refinement and validation of the password manager's performance on various inputs, contributing to a reliable and effective solution.
 
 
-### Software Architecture Diagram:
-![Software Architecture Diagram](path/to/diagram.png)
-
 ## POPL Aspects:
 
 1. **Ownership and Borrowing:**
