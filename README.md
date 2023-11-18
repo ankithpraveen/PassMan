@@ -89,21 +89,21 @@ Sampled Average Memory Utilizatoin: 1824 MB
 
 #### Rust Simple Encryption-Decryption Time
 
-Sampled Average Encryption Time: 8460 ns<br>
-Sampled Average Decryption Time: 3260 ns
+Sampled Average Encryption Time: 7951 ns<br>
+Sampled Average Decryption Time: 6457 ns
 
 #### C++ Simple Encryption-Decryption Time
 
 Sampled Average Encryption Time: 6600 ns<br>
-Sampled Average Decryption Time: 1400 ns
+Sampled Average Decryption Time: 1533 ns
 
 #### Rust Client Creation and Termination Time
 
-Sampled Average Time: 2205320 ns
+Sampled Average Time: 2316830 ns
 
 #### C++ Client Creation and Termination Time
 
-Sampled Average Time: 3465340 ns
+Sampled Average Time: 3393127 ns
 
 ### Graphs and Outputs:
 ![Benchmark Outputs for Cache in C++](results/benchmark_cpp_output_cache.jpg)
