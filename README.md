@@ -42,25 +42,25 @@ For database integration, SQLite3 is employed to store encrypted passwords secur
      While C++ does not have a direct equivalent to Rust's ownership system, it provides manual memory management with pointers and references. However, this manual approach can lead to common pitfalls like memory leaks and undefined behavior.
 
 2. **Concurrency and Thread Safety in Rust:**
-   Rust encourages safe concurrency through its ownership and borrowing system, ensuring that references to data are accessed in a thread-safe manner. Rust's `Send` and `Sync` traits further facilitate safe data sharing between threads.
+   Rust encourages safe concurrency through its ownership and borrowing system, ensuring that references to data are accessed in a thread-safe manner. For illustration purposes, I've utilized Rust's TCPStream crate with `read` and `write_all` functions to demonstrate safe data sharing between threads.
 
    *Comparison with C++:*
    - **C++ Equivalent:**
-     C++ also supports multithreading through its `<thread>` library, but ensuring thread safety is left to the developer. The absence of ownership and borrowing concepts in C++ may lead to data races and other concurrency-related issues.
+     C++ also supports multithreading through its `<thread>` library, but ensuring thread safety is left to the developer. The absence of ownership and borrowing concepts in C++ may lead to data races and other concurrency-related issues. In the example, I've used Winsock2 functions in C++ to perform similar operations.
 
 3. **Error Handling in Rust:**
-   Rust promotes robust error handling through its `Result` and `Option` types. This ensures that functions explicitly declare whether they may produce errors and forces the programmer to handle potential errors.
+   Rust promotes robust error handling which ensures that functions explicitly declare whether they may produce errors and forces the programmer to handle potential errors. Rust's approach of handling errors at compile time makes error handling more explicit and encourages developers to handle errors proactively.
 
    *Comparison with C++:*
    - **C++ Equivalent:**
      C++ relies on exceptions for error handling, which can lead to less predictable control flow. Rust's approach makes error handling more explicit and encourages developers to handle errors proactively.
 
 4. **Lifetime Annotations in Rust:**
-   Rust's lifetime system helps prevent dangling references and ensures that references are valid for the duration they are used. Lifetime annotations explicitly specify the relationship between different references in the code.
+   Rust's automatic memory management, facilitated by its ownership system, eliminates many common memory-related issues like double-free error, fragmentation, dangling pointers, etc. The ownership system ensures that each piece of data has a single owner, and memory is automatically deallocated when the owner goes out of scope.
 
    *Comparison with C++:*
    - **C++ Equivalent:**
-     C++ does not have a direct equivalent to Rust's lifetime system. Developers in C++ need to carefully manage the scope and lifetime of objects to avoid dangling references, which can be error-prone.
+     In contrast, C++ requires developers to manually setting bytes in memory using `memset`, which can lead to memory leaks and other memory-related errors.
 
 5. **Functional Programming Features in Rust:**
    Rust incorporates functional programming concepts, such as first-class functions and closures, allowing developers to write expressive and concise code.
