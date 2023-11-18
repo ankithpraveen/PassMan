@@ -105,8 +105,8 @@ Sampled Average Time: 2205320 ns
 
 Sampled Average Time: 3465340 ns
 
-### Graphs and Outputs:
-![Benchmark Outputs](results/benchmark_cpp_output_cache.jpg)
+### Graphs:
+![Benchmark Graphs](path/to/graphs.png)
 
 ### Validation:
 
