@@ -28,6 +28,10 @@ The project employs local testing on the developer's machine, focusing on manual
 
 For database integration, SQLite3 is employed to store encrypted passwords securely. The local testing approach allows for iterative refinement and validation of the password manager's performance on various inputs, contributing to a reliable and effective solution.
 
+### Requirements
+- **Install SQLite3**
+- **Download Google Benchmark into /cpp-external/xpp_benchmark folder** (https://github.com/google/benchmark)
+
 ### Execution
 - **Simple Password Managers:** <br>
    cargo run (/code-orig/rust_plain_PassMan)<br>
