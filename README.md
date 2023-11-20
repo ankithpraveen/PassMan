@@ -13,11 +13,11 @@ The software architecture is modular, comprising multiple folders, each addressi
 - **Single-Language Password Managers:**
    Implements a basic password manager in Rust and C++.
 
-- **Password Managers with Benchmarking:**
-   Rust and C++ implementations with benchmarking code for encryption and decryption.
-
 - **Concurrent Password Managers:**
    Rust and C++ implementations with client-server architecture and multithreading support.
+
+- **Password Managers with Benchmarking:**
+   Rust and C++ implementations with benchmarking code for encryption and decryption.
 
 - **Simple Encryption/Decryption:**
    Basic encryption and decryption examples in Rust and C++.
@@ -28,6 +28,22 @@ The project employs local testing on the developer's machine, focusing on manual
 
 For database integration, SQLite3 is employed to store encrypted passwords securely. The local testing approach allows for iterative refinement and validation of the password manager's performance on various inputs, contributing to a reliable and effective solution.
 
+### Execution
+- **Single-Language Password Managers:**
+   cargo run (/code-orig/rust_plain_PassMan)<br>
+   g++ -o exe main.cpp -lsqlite3; ./exe (/code-orig/cpp_plain_PassMan)
+
+- **Concurrent Password Managers:**
+   cargo run --bin server; cargo run --bin client (/code-orig/rust_client_server)<br>
+   g++ -o server server.cpp -lws2_32 -lsqlite3; g++ -o client client.cpp -lws2_32; ./server; ./client (/code-orig/cpp_client_server)
+
+- **Password Managers with Benchmarking:**
+   cargo run (code-external/rust_benchmark)<br>
+   g++ -std=c++11 main.cpp -o exe -lbenchmark -lsqlite3; ./exe (code-external/cpp_benchmark)
+
+- **Simple Encryption/Decryption:**
+   cargo run (/code-orig/rust_timediff)<br>
+   g++ -o exe main.cpp; ./exe (/code-orig/cpp_timediff)
 
 ## POPL Aspects:
 
