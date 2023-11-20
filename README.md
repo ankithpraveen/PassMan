@@ -118,7 +118,7 @@ Sampled Average Time: 2316830 ns
 
 Sampled Average Time: 3393127 ns
 
-### Graphs and Outputs:
+### Outputs and Graphs:
 ![Benchmark Outputs for Cache in C++](results/benchmark_cpp_output_cache.jpg)
 #### Cache Results for Benchmarking in C++<br><br>
 ![Benchmark Outputs for Memory in C++](results/benchmark_cpp_output_memory.jpg)
