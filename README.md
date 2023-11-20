@@ -10,7 +10,7 @@ The project aims to address the imperative need for a secure and efficient passw
 The software architecture is modular, comprising multiple folders, each addressing different aspects of our testing and results.
 
 ### Components:
-- **Single-Language Password Managers:**
+- **Simplee Password Managers:**
    Implements a basic password manager in Rust and C++.
 
 - **Concurrent Password Managers:**
@@ -29,7 +29,7 @@ The project employs local testing on the developer's machine, focusing on manual
 For database integration, SQLite3 is employed to store encrypted passwords securely. The local testing approach allows for iterative refinement and validation of the password manager's performance on various inputs, contributing to a reliable and effective solution.
 
 ### Execution
-- **Single-Language Password Managers:** <br>
+- **Simple Password Managers:** <br>
    cargo run (/code-orig/rust_plain_PassMan)<br>
    g++ -o exe main.cpp -lsqlite3; ./exe (/code-orig/cpp_plain_PassMan)
 
