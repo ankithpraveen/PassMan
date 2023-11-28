@@ -10,14 +10,14 @@ The project aims to address the imperative need for a secure and efficient passw
 The software architecture is modular, comprising multiple folders, each addressing different aspects of our testing and results.
 
 ### Components:
-- **Single-Language Password Managers:**
+- **Simplee Password Managers:**
    Implements a basic password manager in Rust and C++.
-
-- **Password Managers with Benchmarking:**
-   Rust and C++ implementations with benchmarking code for encryption and decryption.
 
 - **Concurrent Password Managers:**
    Rust and C++ implementations with client-server architecture and multithreading support.
+
+- **Password Managers with Benchmarking:**
+   Rust and C++ implementations with benchmarking code for encryption and decryption.
 
 - **Simple Encryption/Decryption:**
    Basic encryption and decryption examples in Rust and C++.
@@ -28,9 +28,26 @@ The project employs local testing on the developer's machine, focusing on manual
 
 For database integration, SQLite3 is employed to store encrypted passwords securely. The local testing approach allows for iterative refinement and validation of the password manager's performance on various inputs, contributing to a reliable and effective solution.
 
+### Requirements
+- **Install SQLite3**
+- **Download Google Benchmark into /cpp-external/xpp_benchmark folder** (https://github.com/google/benchmark)
 
-### Software Architecture Diagram:
-![Software Architecture Diagram](path/to/diagram.png)
+### Execution
+- **Simple Password Managers:** <br>
+   cargo run (/code-orig/rust_plain_PassMan)<br>
+   g++ -o exe main.cpp -lsqlite3; ./exe (/code-orig/cpp_plain_PassMan)
+
+- **Concurrent Password Managers:** <br>
+   cargo run --bin server; cargo run --bin client (/code-orig/rust_client_server)<br>
+   g++ -o server server.cpp -lws2_32 -lsqlite3; g++ -o client client.cpp -lws2_32; ./server; ./client (/code-orig/cpp_client_server)
+
+- **Password Managers with Benchmarking:** <br>
+   cargo run (code-external/rust_benchmark)<br>
+   g++ -std=c++11 main.cpp -o exe -lbenchmark -lsqlite3; ./exe (code-external/cpp_benchmark)
+
+- **Simple Encryption/Decryption:** <br>
+   cargo run (/code-orig/rust_timediff)<br>
+   g++ -o exe main.cpp; ./exe (/code-orig/cpp_timediff)
 
 ## POPL Aspects:
 
@@ -89,24 +106,36 @@ Sampled Average Memory Utilizatoin: 1824 MB
 
 #### Rust Simple Encryption-Decryption Time
 
-Sampled Average Encryption Time: 8460 ns<br>
-Sampled Average Decryption Time: 3260 ns
+Sampled Average Encryption Time: 7951 ns<br>
+Sampled Average Decryption Time: 6457 ns
 
 #### C++ Simple Encryption-Decryption Time
 
 Sampled Average Encryption Time: 6600 ns<br>
-Sampled Average Decryption Time: 1400 ns
+Sampled Average Decryption Time: 1533 ns
 
 #### Rust Client Creation and Termination Time
 
-Sampled Average Time: 2205320 ns
+Sampled Average Time: 2316830 ns
 
 #### C++ Client Creation and Termination Time
 
-Sampled Average Time: 3465340 ns
+Sampled Average Time: 3393127 ns
 
-### Graphs:
-![Benchmark Graphs](path/to/graphs.png)
+### Outputs and Graphs:
+![Benchmark Outputs for Cache in C++](results/benchmark_cpp_output_cache.jpg)
+#### Cache Results for Benchmarking in C++<br><br>
+![Benchmark Outputs for Memory in C++](results/benchmark_cpp_output_memory.jpg)
+#### Memory Results for Benchmarking in C++<br><br>
+![Benchmark Outputs for Memory in rust](results/benchmark_rust_output_memory.jpg)
+#### Memory Results for Benchmarking in Rust<br><br>
+
+![Graph for Simple Encryption time Rust vs C++](results/simple_encryption_output.png)
+#### Simple Encryption time Rust vs C++<br><br>
+![Graph for Simple Decryption time Rust vs C++](results/simple_decryption_output.png)
+#### Simple Decryption time Rust vs C++<br><br>
+![Graph for Client Creation and Termination time Rust vs C++](results/client_creation_termination_output.png)
+#### Client Creation and Termination time Rust vs C++<br><br>
 
 ### Validation:
 
